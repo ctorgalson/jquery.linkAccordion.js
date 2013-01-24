@@ -1,0 +1,104 @@
+jquery.linkAccordion.js README
+======================================================================
+
+Author and copyright
+----------------------------------------------------------------------
+Original files in this package copyright 2010-11 Christopher Torgalson
+<manager@bedlamhotel.com>.
+
+
+License
+----------------------------------------------------------------------
+This plugin is released under the GPL, version 3. Please see the
+LICENSE file in this package.
+
+
+Files
+----------------------------------------------------------------------
+scripts/jquery.linkAccordion.js
+    * The plugin
+
+scripts/jquery.linkAccordion.min.js
+    * Minified version of the plugin
+
+LICENSE
+    * GPL version 3
+
+README
+    * This file :)
+
+
+Purpose
+----------------------------------------------------------------------
+A jQuery plugin similar to the jQuery UI accordion plugin but which
+works even when the heading element is a link. The plugin appends a
+new 'toggle link' to the heading element. That link, when clicked,
+toggles the element immediately following the heading. Any already-
+opened toggle section is closed when this current one opens, and
+open/close text in the toggle links is adjusted accordingly.
+
+Can also use headings alone for expand-collapse behaviour.
+
+
+Use
+----------------------------------------------------------------------
+At the most basic possible level, the plugin is called from within an
+html page like so:
+
+  <script type="text/javascript">
+    $(document).ready(function(){
+      $('#parent-element').linkAccordion();    
+    });
+  </script>
+
+It's also possible to override several basic options (see 'Options'
+below) to customize the behaviour and output of the plugin:
+
+  <script type="text/javascript">
+    $(document).ready(function(){
+      $('#parent-element').linkAccordion({
+        openText: 'Open section',
+        closeText: 'Close section',
+        speed: 'fast'
+      });    
+    });
+  </script>
+
+The plugin expects a set of headings and associated content elements
+within a single enclosing element, something like this:
+
+  <div id="parent-element">
+    <h2>In lectus ante, egestas vel vulputate at, aliquet ut nibh</h2>
+    <div>In in leo elit. Phasellus pulvinar pulvinar purus eu venenatis. Cras pretium pharetra sem, in blandit velit euismod vel. Vivamus at congue nibh.</div>
+    
+    <h2>Nunc fermentum lorem sit amet lorem consectetur mollis</h2>
+    
+    <h2>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas</h2>
+    <div>In hac habitasse platea dictumst. Proin volutpat hendrerit erat, ac commodo metus accumsan id.</div>
+    
+    <h2>Sed sed eros nibh, nec tempor felis</h2>
+    <div>Nulla facilisi. Donec non nibh tortor. Maecenas scelerisque mauris sit amet urna sodales vitae congue dui cursus. Vivamus a rhoncus turpis. Curabitur quis odio est.</div>
+    
+    <h3>Curabitur purus lorem, pellentesque sed auctor sit amet, pellentesque viverra ante</h2>
+    <div>Cras arcu arcu, bibendum in posuere dictum, sagittis at quam.</div>
+  </div>
+
+In the above code:
+  * The second h2 element will NOT have an expand/collapse link 
+    appended, since it is not followed by any non-h2 element;
+  * The div following the h3 element will NOT be collapsed and the h3
+    will not have an expand/collapse link appended;
+
+
+Options
+----------------------------------------------------------------------
+  * closedClass: class for closed toggle link
+  * closeText: Text for open state of toggle link
+  * headingElement: The heading element to append toggle links to (must
+    immediately precede the element to be toggled
+  * linkHeadings: (bool) Whether to link the headings directly or to
+    insert a toggle link
+  * openedClass: class for open toggle link
+  * openText: Text for closed state of toggle link
+  * speed: speed of animation of jQuery toggle() function
+  * toggleLinkClass: class for toggle link
