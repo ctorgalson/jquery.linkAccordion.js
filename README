@@ -59,7 +59,9 @@ below) to customize the behaviour and output of the plugin:
       $('#parent-element').linkAccordion({
         openText: 'Open section',
         closeText: 'Close section',
-        speed: 'fast'
+        slideToggle: {
+          duration: 400
+        }
       });    
     });
   </script>
@@ -100,5 +102,5 @@ Options
     insert a toggle link
   * openedClass: class for open toggle link
   * openText: Text for closed state of toggle link
-  * speed: speed of animation of jQuery toggle() function
+  * slideToggle: configuration options for jQuery .slideToggle() function
   * toggleLinkClass: class for toggle link
