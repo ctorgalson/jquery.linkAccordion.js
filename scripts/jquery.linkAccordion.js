@@ -1,28 +1,31 @@
 /**
  * jQuery Link Accordion Plugin
  *
- * A jQuery plugin similar to the jQuery UI accordion plugin but which works even
- * when the heading element is a link. The plugin appends a new 'toggle link' to
- * the heading element. That link, when clicked, toggles the element immediately
- * following the heading. Any already-opened toggle section is closed when this
- * current one opens, and open/close text in the toggle links is adjusted
+ * A jQuery plugin similar to the jQuery UI accordion plugin but which works
+ * even when the heading element is a link. The plugin appends a new 'toggle
+ * link' to the heading element. That link, when clicked, toggles the element
+ * immediately  the heading. Any already-opened toggle section is closed when
+ * this current one opens, and open/close text in the toggle links is adjusted
  * accordingly.
  *
  * @version 1.2
  * @author Christopher Torgalson <manager@bedlamhotel.com>
- * @param object op Configuration options:
+ * @param object overrides Configuration options:
  *
- *  --  closedClass: (string) Class for closed toggle link
- *  --  closeText: (string) Text for open state of toggle link
- *  --  headingElement: (string [css selector]) The heading element to append toggle links to (must
- *      immediately precede the element to be toggled
- *  --  linkHeadings: (bool) Whether to link the headings directly or to insert a toggle link
- *  --  openedClass: (string) Class for open toggle link/heading
- *  --  openText: (string) Text for closed state of toggle link/heading
- *  --  speed: (string) Speed of animation of jQuery toggle() function
- *  --  toggleLinkClass: (string) Class for toggle link
+ * -- closedClass: (string) Class for closed toggle link
+ * -- closeText: (string) Text for open state of toggle link
+ * -- headingElement: (string [css selector]) The heading element to append
+ *    toggle links to (must
+ *    immediately precede the element to be toggled
+ * -- linkHeadings: (bool) Whether to link the headings directly or to insert a
+ *    toggle link
+ * -- openedClass: (string) Class for open toggle link/heading
+ * -- openText: (string) Text for closed state of toggle link/heading
+ * -- slideToggle: (object) configuration options for jQuery .slideToggle()
+ *    function
+ * -- toggleLinkClass: (string) Class for toggle link
  *
- *  @see jQuery toggle function http://docs.jquery.com/Effects/toggle
+ * @see http://api.jquery.com/slideToggle/
  */
 (function($) {
   $.fn.linkAccordion = function(overrides) {
@@ -34,7 +37,7 @@
           linkHeadings: false,
           openedClass: 'toggled-open',
           openText: 'Open',
-          speed: 'normal',
+          slideToggle: 'slow',
           toggleLinkClass: 'section-toggle'
         },
         // Apply overrides to options array, store them:
@@ -47,21 +50,20 @@
     return $headings.each(function callback(i,e) {
       var $heading = $(e),
           $content = $heading.next();
-      // We needn't do anything unless there's content associated with this heading
-      // (i.e. if the next element is not the same kind as this one, and if there
-      // IS a next element)...
+      // We needn't do anything unless there's content associated with this
+      // heading (i.e. if the next element is not the same kind as this one, and
+      // if there IS a next element)...
       if (!$heading.next().is(settings.headingElement) && $heading.next().length > 0) {
         // If we're setting up to make the whole heading clickable:
         if (settings.linkHeadings === true) {
           // Build the onclick behaviour on the current heading:
-          $heading.click(function(){
+          $heading.click(function(e){
             // If the current content is hidden:
             if ($content.is(':hidden')) {
               // Set the heading's status to show it's open:
               $heading.removeClass(settings.closedClass).addClass(settings.openedClass);
               // Hide all the other contents:
-              $contents.not($content)
-                .hide(settings.speed);
+              $contents.not($content).slideUp(settings.slideToggle);
               // Change the class attribute on the other headings:
               $headings.not($heading)
                 .removeClass(settings.openedClass)
@@ -72,9 +74,9 @@
               $heading.removeClass(settings.openedClass).addClass(settings.closedClass);
             }
             // The current content always needs toggling:
-            $content.slideToggle(settings.speed);
+            $content.slideToggle(settings.slideToggle);
             // Don't follow the link:
-            return false;
+            e.preventDefault();
           });
         }
         // But if we plan to use a toggle link inside, but not surrounding the
@@ -85,23 +87,24 @@
             .text(settings.openText)
             .addClass(settings.toggleLinkClass + ' ' + settings.closedClass)
             // Build the onclick behaviour of the toggle link:
-            .click(function(){
+            .click(function(e){
               var $link = $(this);
               // If the current toggle link is closed and gets clicked:
               if ($content.is(':hidden')) {
                 // We need to switch the text and relevant classes because the
-                // following 'toggle()' will expand it:
+                // following 'slideToggle()' will expand it:
                 $link
                   .text(settings.closeText)
                   .removeClass(settings.closedClass)
                   .addClass(settings.openedClass);
-                // We also need to close any other content elements already open:
+                // We also need to close any other content elements already
+                // open:
                 $contents.not($content)
                 .hide(settings.speed);
                 // Finally, we need to alter the class and text on any other
                 // already open toggle links:
                 $headings.not($heading)
-                  .find('.'+ settings.toggleLinkClass)
+                  .find('.' + settings.toggleLinkClass)
                   .text(settings.openText)
                   .removeClass(settings.openedClass)
                   .addClass(settings.closedClass);
@@ -114,10 +117,11 @@
                   .removeClass(settings.openedClass)
                   .addClass(settings.closedClass);
               }
-              // We ALWAYS need to toggle the content that goes with this heading:
-              $content.slideToggle(settings.speed);
+              // We ALWAYS need to toggle the content that goes with this
+              // heading:
+              $content.slideToggle(settings.slideToggle);
               // Don't follow the link:
-              return false;
+              e.preventDefault();
             });
           // Finally, append the toggle link to the current heading...
           $heading.append($toggleLink);
