@@ -72,6 +72,11 @@
               $otherHeadings.removeClass(settings.openedClass).addClass(settings.closedClass);
               $content.slideDown(settings.slideToggle);
               $otherContents.slideUp(settings.slideToggle);
+              console.dir($heading);
+              console.log(settings.toggleLinkClass);
+              if (!settings.linkHeadings) {
+                $(this).text(settings.closeText);
+              }
             }
             // Otherwise, it must be visible:
             else {
@@ -79,6 +84,9 @@
               // and content clicked:
               $heading.removeClass(settings.openedClass).addClass(settings.closedClass);
               $content.slideUp(settings.slideToggle);
+              if (!settings.linkHeadings) {
+                $(this).text(settings.openText);
+              }
             }
             e.preventDefault();
           };
@@ -87,9 +95,10 @@
             $headings.click(clickHandler);
           }
           else {
-            var $toggleLink = $('<a href="#"/>').addClass(settings.toggleLinkClass).text(settings.openText);
+            var $toggleLink = $('<a href="#"/>').addClass(settings.toggleLinkClass);
             $headings.each(function(i,e) {
-              $(e).append($toggleLink.clone().click(clickHandler));
+              var linkText = (i === settings.defaultContent ? settings.closeText : settings.openText);
+              $(e).append($toggleLink.clone().click(clickHandler).text(linkText));
             });
           }
     });
