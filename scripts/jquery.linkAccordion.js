@@ -8,7 +8,7 @@
  * this current one opens, and open/close text in the toggle links is adjusted
  * accordingly.
  *
- * @version 1.3
+ * @version 2.0
  * @author Christopher Torgalson <manager@bedlamhotel.com>
  * @param object overrides Configuration options:
  *
@@ -33,118 +33,62 @@
  * @see http://api.jquery.com/eq/
  */
 (function($) {
-  $.fn.linkAccordion = function(overrides) {  
+  $.fn.linkAccordion = function(overrides) {
     var defaults = {
         closedClass: 'toggled-closed',
         closeText: 'Close',
-        defaultContent: 1,
+        defaultContent: 0,
         headingElement: 'h2',
         linkHeadings: false,
         openedClass: 'toggled-open',
         openText: 'Open',
         slideToggle: 'slow',
-        toggleLinkClass: 'section-toggle'            
+        toggleLinkClass: 'section-toggle'
       },
       settings = $.extend({}, defaults, overrides);
     return this.each(function(i,e) {
-      // Variables: make a collection of the current element, a collection of the
-      // 'content' containers, and a collection of the headings; initially hide
-      // the contents:
       var $current = $(e),
-          defaultContentSelector = ':eq(' + parseInt(settings.defaultContent) + ')',
-          $contents = $current
-            .find(settings.headingElement)
-            .next()
-            .not(defaultContentSelector)
-            .hide(),
           $headings = $current
-            .find(settings.headingElement)
-            .addClass(settings.closedClass)
-            .filter(defaultContentSelector)
-            .addClass(settings.openedClass)
-            .removeClass(settings.closedClass)
-            .end()
-            .each(function(i,e){
-              var $heading = $(e),
-                  $content = $heading.next();
-                  // We needn't do anything unless there's content associated with this
-                  // heading (i.e. if the next element is not the same kind as this one, and
-                  // if there IS a next element)...
-                  if (!$heading.next().is(settings.headingElement) && $heading.next().length > 0) {
-                    // If we're setting up to make the whole heading clickable:
-                    if (settings.linkHeadings === true) {
-                      // Build the onclick behaviour on the current heading:
-                      $heading.click(function(e){
-                        // If the current content is hidden:
-                        if ($content.is(':hidden')) {
-                          // Set the heading's status to show it's open:
-                          $heading.removeClass(settings.closedClass).addClass(settings.openedClass);
-                          // Hide all the other contents:
-                          $contents.not($content).slideUp(settings.slideToggle);
-                          // Change the class attribute on the other headings:
-                          $headings.not($heading)
-                            .removeClass(settings.openedClass)
-                            .addClass(settings.closedClass);
-                        }
-                        else {
-                          // Set the heading's status to show it's closed:
-                          $heading.removeClass(settings.openedClass).addClass(settings.closedClass);
-                        }
-                        // The current content always needs toggling:
-                        $content.slideToggle(settings.slideToggle);
-                        // Don't follow the link:
-                        e.preventDefault();
-                      });
-                    }
-                    // But if we plan to use a toggle link inside, but not surrounding the
-                    // content of the heading:
-                    else {
-                      // Build the toggle link, define text, default attributes:
-                      var $toggleLink = $('<a href="#" />')
-                        .text(settings.openText)
-                        .addClass(settings.toggleLinkClass + ' ' + settings.closedClass)
-                        // Build the onclick behaviour of the toggle link:
-                        .click(function(e){
-                          var $link = $(this);
-                          // If the current toggle link is closed and gets clicked:
-                          if ($content.is(':hidden')) {
-                            // We need to switch the text and relevant classes because the
-                            // following 'slideToggle()' will expand it:
-                            $link
-                              .text(settings.closeText)
-                              .removeClass(settings.closedClass)
-                              .addClass(settings.openedClass);
-                            // We also need to close any other content elements already
-                            // open:
-                            $contents.not($content)
-                              .hide(settings.speed);
-                            // Finally, we need to alter the class and text on any other
-                            // already open toggle links:
-                            $headings.not($heading)
-                              .find('.' + settings.toggleLinkClass)
-                              .text(settings.openText)
-                              .removeClass(settings.openedClass)
-                              .addClass(settings.closedClass);
-                          }
-                          // But if the link just clicked was already open:
-                          else {
-                            // We just need to change the text and classes:
-                            $link
-                              .text(settings.openText)
-                              .removeClass(settings.openedClass)
-                              .addClass(settings.closedClass);
-                          }
-                          // We ALWAYS need to toggle the content that goes with this
-                          // heading:
-                          $content.slideToggle(settings.slideToggle);
-                          // Don't follow the link:
-                          e.preventDefault();
-                        });
-                      // Finally, append the toggle link to the current heading...
-                      $heading.append($toggleLink);
-                    }
-                  }
-            });      
+            .find(settings.headingElement) // Get the headings...
+            .eq(settings.defaultContent) // Reduce collection to default...
+            .addClass(settings.openedClass) // Add opened class...
+            .end(), // Return to full collection...
+          // Get the corresponding contents:
+          $contents = $headings.next().not(':eq(' + settings.defaultContent + ')').hide().end(),
+          clickHandler = function(e) { // Add click handler...
+            // We don't know, in this context, what element the click handler
+            // will be attached to. This means to that to determin the heading,
+            // we need to test the kind of element that's just been clicked each
+            // time the click event occurs:
+            var $heading = $(this).is(settings.headingElement) ? $(this) : $(this).parent(),
+                $otherHeadings = $headings.not($heading),
+                $content = $heading.next(),
+                $otherContents = $contents.not($content);
+            // If content corresponding to current heading is hidden:
+            if ($content.is(':hidden')) {
+              $heading.removeClass(settings.closedClass).addClass(settings.openedClass);
+              $otherHeadings.removeClass(settings.openedClass).addClass(settings.closedClass);
+              $content.slideDown(settings.slideToggle);
+              $otherContents.slideUp(settings.slideToggle);
+            }
+            // Otherwise, it must be visible:
+            else {
+              $heading.removeClass(settings.openedClass).addClass(settings.closedClass);
+              $otherHeadings.removeClass(settings.closedClass).addClass(settings.openedClass);
+              $content.slideUp(settings.slideToggle);
+            }
+            e.preventDefault();
+          };
+          //
+          if (settings.linkHeadings) {
+            $headings.click(clickHandler);
+          }
+          else {
+            var $toggleLink = $('<a href="#"/>').addClass(settings.toggleLinkClass).text(settings.openText);
+            $headings.each(function(i,e) {
+              $(e).append($toggleLink.clone().click(clickHandler));
+            });
+          }
     });
   };
 })(jQuery);
