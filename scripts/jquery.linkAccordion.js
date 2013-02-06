@@ -8,7 +8,7 @@
  * this current one opens, and open/close text in the toggle links is adjusted
  * accordingly.
  *
- * @version 2.0
+ * @version 2.1
  * @author Christopher Torgalson <manager@bedlamhotel.com>
  * @param object overrides Configuration options:
  *
@@ -48,10 +48,12 @@
       settings = $.extend({}, defaults, overrides);
     return this.each(function(i,e) {
       var $current = $(e),
+          // Get the headings...
           $headings = $current
             .find(settings.headingElement) // Get the headings...
+            .addClass(settings.closedClass) // Give them all the closed class...
             .eq(settings.defaultContent) // Reduce collection to default...
-            .addClass(settings.openedClass) // Add opened class...
+            .addClass(settings.openedClass) // Add opened class to this item...
             .end(), // Return to full collection...
           // Get the corresponding contents:
           $contents = $headings.next().not(':eq(' + settings.defaultContent + ')').hide().end(),
@@ -73,8 +75,9 @@
             }
             // Otherwise, it must be visible:
             else {
+              // This means we can restrict our attention ONLY to the heading
+              // and content clicked:
               $heading.removeClass(settings.openedClass).addClass(settings.closedClass);
-              $otherHeadings.removeClass(settings.closedClass).addClass(settings.openedClass);
               $content.slideUp(settings.slideToggle);
             }
             e.preventDefault();
