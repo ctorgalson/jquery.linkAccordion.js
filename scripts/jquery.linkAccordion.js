@@ -14,9 +14,13 @@
  *
  * -- closedClass: (string) Class for closed toggle link
  * -- closeText: (string) Text for open state of toggle link
+ * -- defaultContent: (int) [zero-based] index of accordion item to open
+ *    by default. Uses jQuery's .eq()/:eq() so that positive integers count from
+ *    the beginning of the collection and negative integers count from the end
+ *    of the collection. To open NO items by default use an integer larger than
+ *    the size of the jQuery collection being operated on.
  * -- headingElement: (string [css selector]) The heading element to append
- *    toggle links to (must
- *    immediately precede the element to be toggled
+ *    toggle links to (must immediately precede the element to be toggled
  * -- linkHeadings: (bool) Whether to link the headings directly or to insert a
  *    toggle link
  * -- openedClass: (string) Class for open toggle link/heading
@@ -26,12 +30,14 @@
  * -- toggleLinkClass: (string) Class for toggle link
  *
  * @see http://api.jquery.com/slideToggle/
+ * @see http://api.jquery.com/eq/
  */
 (function($) {
   $.fn.linkAccordion = function(overrides) {  
     var defaults = {
         closedClass: 'toggled-closed',
         closeText: 'Close',
+        defaultContent: 1,
         headingElement: 'h2',
         linkHeadings: false,
         openedClass: 'toggled-open',
@@ -45,14 +51,19 @@
       // 'content' containers, and a collection of the headings; initially hide
       // the contents:
       var $current = $(e),
+          defaultContentSelector = ':eq(' + parseInt(settings.defaultContent) + ')',
           $contents = $current
             .find(settings.headingElement)
             .next()
-            .not(settings.headingElement)
+            .not(defaultContentSelector)
             .hide(),
           $headings = $current
             .find(settings.headingElement)
             .addClass(settings.closedClass)
+            .filter(defaultContentSelector)
+            .addClass(settings.openedClass)
+            .removeClass(settings.closedClass)
+            .end()
             .each(function(i,e){
               var $heading = $(e),
                   $content = $heading.next();
@@ -106,7 +117,7 @@
                             // We also need to close any other content elements already
                             // open:
                             $contents.not($content)
-                            .hide(settings.speed);
+                              .hide(settings.speed);
                             // Finally, we need to alter the class and text on any other
                             // already open toggle links:
                             $headings.not($heading)

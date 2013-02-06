@@ -96,6 +96,11 @@ Options
 ----------------------------------------------------------------------
   * closedClass: class for closed toggle link
   * closeText: Text for open state of toggle link
+  * defaultContent: (int) [zero-based] index of accordion item to open
+    by default. Uses jQuery's .eq()/:eq() so that positive integers count from
+    the beginning of the collection and negative integers count from the end
+    of the collection. To open NO items by default use an integer larger than
+    the size of the jQuery collection being operated on.
   * headingElement: The heading element to append toggle links to (must
     immediately precede the element to be toggled
   * linkHeadings: (bool) Whether to link the headings directly or to
