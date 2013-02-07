@@ -8,7 +8,7 @@
  * this current one opens, and open/close text in the toggle links is adjusted
  * accordingly.
  *
- * @version 2.1
+ * @version 2.2
  * @author Christopher Torgalson <manager@bedlamhotel.com>
  * @param object overrides Configuration options:
  *
@@ -72,8 +72,6 @@
               $otherHeadings.removeClass(settings.openedClass).addClass(settings.closedClass);
               $content.slideDown(settings.slideToggle);
               $otherContents.slideUp(settings.slideToggle);
-              console.dir($heading);
-              console.log(settings.toggleLinkClass);
               if (!settings.linkHeadings) {
                 $(this).text(settings.closeText);
               }
