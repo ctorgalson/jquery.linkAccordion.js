@@ -41,6 +41,8 @@
  * @see http://api.jquery.com/eq/
  */
 (function($) {
+  "use strict";
+
   $.fn.linkAccordion = function(overrides) {
     var defaults = {
         closedClass: 'toggled-closed',
