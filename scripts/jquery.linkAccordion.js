@@ -8,7 +8,7 @@
  * this current one opens, and open/close text in the toggle links is adjusted
  * accordingly.
  *
- * @version 2.2
+ * @version 2.3
  * @author Christopher Torgalson <manager@bedlamhotel.com>
  *
  * @param {object} overrides
